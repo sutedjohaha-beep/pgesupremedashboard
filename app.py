@@ -18,9 +18,22 @@ MAX_UPLOAD = 5 * 1024 * 1024  # 5 MB
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.secret_key = os.environ.get('SECRET_KEY', secrets.token_hex(32))
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=12)
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+# Initialize DB immediately at module load (works with Gunicorn)
+_db_initialized = False
+def ensure_db():
+    global _db_initialized
+    if not _db_initialized:
+        init_db()
+        _db_initialized = True
+
+@app.before_request
+def before_request():
+    ensure_db()
 
 # ─────────────────────────── DATABASE ─────────────────────────
 def get_db():
@@ -496,12 +509,45 @@ def get_img_data(sheet, no):
     entry = img_data.get(sheet, {}).get(no, {'temuan':[], 'tl':[]})
     return jsonify(entry)
 
+
+# ── Emergency admin reset (set SETUP_KEY env var to enable) ──
+@app.route('/api/setup/reset-admin', methods=['POST'])
+def reset_admin():
+    setup_key = os.environ.get('SETUP_KEY', '')
+    if not setup_key:
+        return jsonify({'error': 'SETUP_KEY not set'}), 403
+    data = request.get_json()
+    if data.get('key') != setup_key:
+        return jsonify({'error': 'Invalid key'}), 403
+    password = data.get('password', 'Admin2025!')
+    db = get_db()
+    db.execute("UPDATE users SET password_hash=? WHERE username='admin'", (hash_pw(password),))
+    if db.execute("SELECT COUNT(*) as c FROM users WHERE username='admin'").fetchone()['c'] == 0:
+        db.execute("INSERT INTO users (username,password_hash,name,role,dept,color) VALUES (?,?,?,?,?,?)",
+                   ('admin', hash_pw(password), 'Admin Audit', 'admin', 'Admin', '#4d8ef7'))
+    db.commit()
+    db.close()
+    return jsonify({'ok': True, 'message': f'Admin password set to: {password}'})
+
+@app.route('/api/setup/check')
+def check_setup():
+    db = get_db()
+    users = db.execute("SELECT username,role FROM users").fetchall()
+    db.close()
+    return jsonify({'users': [dict(u) for u in users], 'db': DB_PATH})
+
 # ── HEALTH CHECK ──
 @app.route('/api/health')
 def health():
     return jsonify({'status': 'ok', 'time': datetime.now().isoformat()})
 
 # ─────────────────────────── MAIN ─────────────────────────────
+# Also call at module level for Gunicorn workers
+try:
+    init_db()
+except Exception as e:
+    print(f"DB init warning: {e}")
+
 if __name__ == '__main__':
     init_db()
     port = int(os.environ.get('PORT', 5000))
