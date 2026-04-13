@@ -349,19 +349,36 @@ def validate_finding(fid):
         msg = f"Temuan {fid} DIVALIDASI oleh {session['name']}. Tindak lanjut dinyatakan SELESAI."
         if pic_user: add_notif(pic_user['username'], 'validated', fid, msg)
     else:
-        msg = f"Temuan {fid} perlu KLARIFIKASI. Catatan Admin: {note}"
+        msg_lines = [
+            f"Temuan {fid} perlu KLARIFIKASI dari Admin.",
+            f"Catatan: {note}" if note else "",
+            f"Deliverables: {(finding.get('deliverables') or '-')[:100] if finding else '-'}"
+        ]
+        msg = " | ".join(l for l in msg_lines if l)
         if pic_user: add_notif(pic_user['username'], 'clarify', fid, msg)
         if pic_user and pic_user.get('wa'):
             pname = pic_user['name']
+            rencana = finding.get('rencana_tindak_lanjut') or finding.get('rencana') or '-' if finding else '-'
+            deliv = finding.get('deliverables') or '-' if finding else '-'
+            sheet = finding.get('sheet','') if finding else ''
+            # Foto info for SPT/SBT
+            foto_line = ''
+            if sheet in ('SPT','SBT'):
+                foto_line = f"\n📸 *Foto Temuan:* tersedia di dashboard"
             wa_lines = [
                 f"Halo {pname},", "",
                 "*KLARIFIKASI DIPERLUKAN - Audit SUPREME 2025*", "",
-                f"ID: {fid}", f"{fname}", "",
-                "Catatan Admin:", f"{note}", "",
-                "Mohon segera melengkapi evidence.", "",
+                f"🔖 *ID Temuan:* {fid}",
+                f"📍 *Sheet/Kategori:* {sheet}",
+                f"📌 *Uraian Temuan:*", f"{fname}", "",
+                f"📝 *Rencana Tindak Lanjut:*", f"{rencana}", "",
+                f"🎯 *Deliverables (yang harus diselesaikan):*", f"{deliv}", "",
+                f"📝 *Catatan dari Admin:*", f"{note or 'Mohon melengkapi evidence.'}", "",
+                f"Mohon segera perbarui progres tindak lanjut.",
                 "_Tim Internal Audit PGE UBL_"
             ]
-            wa_msg = {'to': pic_user['wa'], 'name': pname, 'text': "\n".join(wa_lines)}
+            wa_msg = {'to': pic_user['wa'], 'name': pname,
+                      'text': "\n".join(wa_lines) + foto_line}
     return jsonify({'ok': True, 'action': action, 'wa_message': wa_msg, 'pic': pic_user})
 
 @app.route('/api/notifications')
