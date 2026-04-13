@@ -98,7 +98,20 @@
       <div class="page-title">Dashboard Tindak Lanjut Audit SUPREME 2025</div>
       <div class="page-sub">PT Pertamina Geothermal Energy Tbk. Area Ulubelu · <span id="dashDate"></span></div>
     </div>
-    <div id="hdrBadges" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+    <div id="hdrBadges" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+      </div>
+      <div style="position:relative;display:inline-block">
+        <button class="btn btn-ghost btn-sm" onclick="toggleNotifDropdown()" style="position:relative;padding:7px 10px">
+          🔔 <span id="notifInboxBadge" style="display:none;position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:700;display:none;align-items:center;justify-content:center"></span>
+        </button>
+        <div id="notifDropdown" style="display:none;position:absolute;right:0;top:calc(100% + 6px);width:360px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);box-shadow:0 8px 32px rgba(0,0,0,0.4);z-index:200;max-height:480px;overflow-y:auto">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2)">
+            <div style="font-size:13px;font-weight:600">Notifikasi</div>
+            <button class="abtn" onclick="markAllRead()">Tandai semua dibaca</button>
+          </div>
+          <div id="notifInboxPanel"><div style="padding:16px;font-size:12px;color:var(--text3);text-align:center">Memuat...</div></div>
+        </div>
+      </div>
   </div>
   <div class="stats" id="statCards"></div>
   <div class="od-panel" id="odPanel" style="display:none">
@@ -146,6 +159,24 @@
       <div class="card-title">Capaian per Fungsi</div>
       <div class="card-sub">Persentase selesai</div>
       <div class="dept-list" id="deptList"></div>
+    </div>
+  </div>
+
+  <!-- EXPIRY STATS: Due within 30 and 60 days -->
+  <div style="margin-bottom:12px">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <div>
+          <div class="card-title">⏳ Temuan Mendekati Batas Waktu</div>
+          <div class="card-sub">Temuan yang due date-nya dalam 60 hari ke depan (belum selesai)</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <span class="badge b-amber" id="expiry30Badge">0 ≤30 hari</span>
+          <span class="badge b-blue" id="expiry60Badge">0 ≤60 hari</span>
+        </div>
+      </div>
+      <div style="position:relative;height:200px"><canvas id="cExpiry" role="img" aria-label="Expiry chart"></canvas></div>
+      <div id="expiryList" style="margin-top:12px;display:flex;flex-direction:column;gap:5px;max-height:200px;overflow-y:auto"></div>
     </div>
   </div>
 </div>
@@ -440,10 +471,16 @@
   </div>
   <div id="updForm" style="display:none">
     <div class="card">
-      <div class="card-title" id="updFTitle">Update Progres</div>
-      <div class="card-sub" id="updFSub"></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div>
+          <div class="card-title" id="updFTitle">Update Progres</div>
+          <div class="card-sub" id="updFSub"></div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="cancelUpdate()">✕ Tutup</button>
+      </div>
       <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:16px">
-        <div class="form-group"><label class="form-label">% Realisasi</label>
+        <div class="form-group">
+          <label class="form-label">% Realisasi</label>
           <div class="pct-select">
             <button class="pct-opt on" data-v="0" onclick="setPct(0,this)">0% – Belum</button>
             <button class="pct-opt" data-v="25" onclick="setPct(25,this)">25% – Action Plan</button>
@@ -452,22 +489,33 @@
             <button class="pct-opt" data-v="100" onclick="setPct(100,this)">100% – Selesai</button>
           </div>
         </div>
-        <div class="form-group"><label class="form-label">Catatan Update</label><textarea class="form-input" id="updNote" placeholder="Progres, kendala, keterangan..."></textarea></div>
-        <div class="form-group"><label class="form-label">Deliverables</label><input class="form-input" id="updDeliv" placeholder="Dokumen atau output..."></div>
-        <div id="updImgSection" style="display:none">
-          <div class="form-group">
-            <label class="form-label" style="display:flex;align-items:center;gap:6px">📸 Upload Foto Bukti Tindak Lanjut <span style="color:var(--green);font-size:10px">(SPT/SBT)</span></label>
-            <div class="img-upload-area" onclick="triggerUpdUpload()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleUpdDrop(event)" style="margin-top:6px">
-              <div class="upload-ico">📤</div>
-              <div class="upload-label">Klik atau drag foto bukti penyelesaian</div>
-              <div class="upload-hint">JPG/PNG · maks 5MB per foto · bisa multiple</div>
-            </div>
-            <input type="file" id="updFileInput" accept="image/*" multiple style="display:none" onchange="handleUpdFileInput(event)">
-          </div>
-          <div id="updTlPreview" class="tl-preview-grid"></div>
+        <div class="form-group">
+          <label class="form-label">Catatan Update</label>
+          <textarea class="form-input" id="updNote" rows="3" placeholder="Deskripsikan progres, kendala, atau keterangan..."></textarea>
         </div>
-        <div style="display:flex;gap:8px;margin-top:12px">
-          <button class="btn btn-primary" onclick="submitUpdate()">💾 Simpan</button>
+        <div class="form-group">
+          <label class="form-label">Deliverables</label>
+          <input class="form-input" id="updDeliv" placeholder="Nama dokumen atau output yang dihasilkan...">
+        </div>
+        <!-- Evidence upload - always shown -->
+        <div class="form-group">
+          <label class="form-label" style="display:flex;align-items:center;gap:6px">
+            📎 Upload File Evidence
+            <span style="color:var(--text3);font-weight:400;font-size:10px">Gambar, PDF, Word, Excel, dll · Tidak ada batasan</span>
+          </label>
+          <div class="img-upload-area" onclick="document.getElementById('updEvidenceInput').click()"
+            ondragover="event.preventDefault();this.classList.add('drag')"
+            ondragleave="this.classList.remove('drag')"
+            ondrop="handleUpdDrop(event)" style="margin-top:6px">
+            <div class="upload-ico">📎</div>
+            <div class="upload-label">Klik atau drag file evidence</div>
+            <div class="upload-hint">Semua format file diterima · Upload sebanyak yang dibutuhkan</div>
+          </div>
+          <input type="file" id="updEvidenceInput" multiple style="display:none" onchange="handleUpdFileInput(event)">
+        </div>
+        <div id="updEvidencePreview" style="margin-top:4px"></div>
+        <div style="display:flex;gap:8px;margin-top:14px">
+          <button class="btn btn-primary" onclick="submitUpdate()">💾 Simpan Update</button>
           <button class="btn btn-ghost" onclick="cancelUpdate()">Batal</button>
         </div>
       </div>
