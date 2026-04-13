@@ -263,3 +263,24 @@ tbody tr:hover td{background:var(--bg3)}tbody tr:last-child td{border-bottom:non
   .stats{grid-template-columns:repeat(2,1fr)}.g2,.g3{grid-template-columns:1fr}
   .um-layout{grid-template-columns:1fr}.sched-grid{grid-template-columns:repeat(2,1fr)}
 }
+
+/* ── New v2 features ── */
+.btn-amber{background:var(--amber);color:#1a1a2e;border-color:var(--amber)}
+.btn-amber:hover{filter:brightness(1.12)}
+.btn-purple{background:var(--purple);color:#fff;border-color:var(--purple)}
+.btn-purple:hover{filter:brightness(1.12)}
+.b-purple{background:rgba(155,122,245,0.15);color:var(--purple);border:1px solid rgba(155,122,245,0.3)}
+.abtn.red{background:rgba(232,82,82,0.15);color:var(--red);border-color:rgba(232,82,82,0.3)}
+.abtn.red:hover{background:rgba(232,82,82,0.3)}
+/* Evidence file list */
+.ev-file-row{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--rsm);margin-bottom:4px;transition:background 0.15s}
+.ev-file-row:hover{background:var(--bg3)}
+/* Notification dropdown */
+#notifDropdown::-webkit-scrollbar{width:4px}
+#notifDropdown::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+/* Validation action buttons */
+.btn-sm.btn-green{background:var(--green);color:#1a1a2e;border-color:var(--green);padding:6px 12px;font-size:11px}
+.btn-sm.btn-amber{background:var(--amber);color:#1a1a2e;border-color:var(--amber);padding:6px 12px;font-size:11px}
+/* Expiry list */
+#expiryList::-webkit-scrollbar{width:4px}
+#expiryList::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
