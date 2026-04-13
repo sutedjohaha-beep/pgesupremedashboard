@@ -101,6 +101,10 @@ async function doLogin() {
   err.textContent = '';
   await loadAllData();
   startApp(res);
+  // Load foto data in background
+  API.get('/imgdata_all').then(data => {
+    if (data) { IMG_DATA = data; window.IMG_DATA = data; }
+  });
 }
 
 async function doSelfRegister() {
@@ -585,12 +589,15 @@ async function initApp() {
     document.getElementById('appScreen').style.display='none';
     return;
   }
-  window.CUR=user; // expose for validation check in toggleDetail
+  window.CUR=user;
   await loadAllData();
   startApp(user);
   loadInboxNotifs();
-  // Poll notifications every 30s
   setInterval(loadInboxNotifs, 30000);
+  // Load foto data lazily in background (SPT/SBT photos)
+  API.get('/imgdata_all').then(data => {
+    if (data) { IMG_DATA = data; window.IMG_DATA = data; }
+  });
   const upd=new URLSearchParams(window.location.search).get('upd');
   if (upd) setTimeout(()=>goUpd(upd),800);
 }
