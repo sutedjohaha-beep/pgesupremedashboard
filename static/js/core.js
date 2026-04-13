@@ -529,16 +529,36 @@ function renderDashboard(){
   const proses=data.filter(r=>getStatus(r)==='proses').length;
   const overdue=data.filter(r=>getStatus(r)==='overdue').length;
   const belum=data.filter(r=>getStatus(r)==='belum').length;
+  const due30=data.filter(r=>{const dl=dLeft(r.due_date);return getStatus(r)!=='selesai'&&getStatus(r)!=='overdue'&&dl!==null&&dl>=0&&dl<=30;}).length;
+  const due60=data.filter(r=>{const dl=dLeft(r.due_date);return getStatus(r)!=='selesai'&&getStatus(r)!=='overdue'&&dl!==null&&dl>30&&dl<=60;}).length;
+  const pendingValidation=data.filter(r=>r.update_status==='pending'&&r.latest_update_id&&r.validation_action!=='validate').length;
   updateOverdueBadge();
   document.getElementById('hdrBadges').innerHTML=
-    `<span class="badge b-red">${overdue} Overdue</span><span class="badge b-amber">${belum} Belum</span><span class="badge b-blue">${data.filter(r=>{const dl=dLeft(r.due_date);return getStatus(r)!=='selesai'&&dl!==null&&dl<=10;}).length} Due ≤10hr</span><span class="badge b-green">${selesai} Selesai</span>`;
-  document.getElementById('statCards').innerHTML=`
-    <div class="stat cB" onclick="filterAndGo('')" style="cursor:pointer;transition:transform 0.15s" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform=''"><div class="stat-l">Total Temuan</div><div class="stat-v">${total}</div><div class="stat-s">↗ klik → semua temuan</div></div>
-    <div class="stat cG" onclick="filterAndGo('selesai')" style="cursor:pointer;transition:transform 0.15s" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform=''"><div class="stat-l">Selesai</div><div class="stat-v">${selesai}</div><div class="stat-s">↗ ${Math.round(selesai/total*100)}% · klik → detail</div></div>
-    <div class="stat cB" onclick="filterAndGo('proses')" style="cursor:pointer;transition:transform 0.15s" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform=''"><div class="stat-l">Dalam Proses</div><div class="stat-v">${proses}</div><div class="stat-s">↗ klik → detail</div></div>
-    <div class="stat cA" onclick="filterAndGo('belum')" style="cursor:pointer;transition:transform 0.15s" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform=''"><div class="stat-l">Belum Mulai</div><div class="stat-v">${belum}</div><div class="stat-s">↗ klik → detail</div></div>
-    <div class="stat cR" onclick="filterAndGo('overdue')" style="cursor:pointer;transition:transform 0.15s" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform=''"><div class="stat-l">Overdue</div><div class="stat-v">${overdue}</div><div class="stat-s">↗ klik → detail</div></div>`;
-  // Overdue + due <=10 panel
+    '<span class="badge b-red">'+overdue+' Overdue</span>'
+    +'<span class="badge b-amber">'+belum+' Belum</span>'
+    +'<span class="badge b-blue">'+data.filter(r=>{const dl=dLeft(r.due_date);return getStatus(r)!=='selesai'&&dl!==null&&dl<=10;}).length+' Due ≤10hr</span>'
+    +'<span class="badge b-green">'+selesai+' Selesai</span>'
+    +(pendingValidation>0?'<span class="badge b-purple" style="cursor:pointer" onclick="filterAndGo(&apos;proses&apos;)">'+pendingValidation+' Tunggu Validasi</span>':'');
+  (function(){
+    var sc=document.getElementById('statCards');
+    if(!sc)return;
+    var cards=[
+      {cls:'cB',label:'Total Temuan',val:total,sub:'↗ klik → semua temuan',fn:''},
+      {cls:'cG',label:'Selesai',val:selesai,sub:'↗ '+Math.round(selesai/total*100)+'% · klik → detail',fn:'selesai'},
+      {cls:'cB',label:'Dalam Proses',val:proses,sub:'↗ klik → detail',fn:'proses'},
+      {cls:'cA',label:'Belum Mulai',val:belum,sub:'↗ klik → detail',fn:'belum'},
+      {cls:'cR',label:'Overdue',val:overdue,sub:'↗ klik → detail',fn:'overdue'},
+    ];
+    var html=cards.map(function(c){
+      return '<div class="stat '+c.cls+'" onclick="filterAndGo(\'' +c.fn+ '\')" style="cursor:pointer;transition:transform 0.15s" onmouseenter="this.style.transform=\'translateY(-2px)\'" onmouseleave="this.style.transform=\'\'"><div class="stat-l">'+c.label+'</div><div class="stat-v">'+c.val+'</div><div class="stat-s">'+c.sub+'</div></div>';
+    }).join('');
+    html+='<div class="stat" style="border-color:rgba(255,165,0,0.4);cursor:pointer;transition:transform 0.15s" onclick="filterExpiry(30)" onmouseenter="this.style.transform=\'translateY(-2px)\'" onmouseleave="this.style.transform=\'\'">'
+        +'<div class="stat-l" style="color:var(--amber)">⚠️ Due ≤30 Hari</div><div class="stat-v" style="color:var(--amber)">'+due30+'</div><div class="stat-s">Segera diselesaikan</div></div>';
+    html+='<div class="stat" style="border-color:rgba(77,142,247,0.4);cursor:pointer;transition:transform 0.15s" onclick="filterExpiry(60)" onmouseenter="this.style.transform=\'translateY(-2px)\'" onmouseleave="this.style.transform=\'\'">'
+        +'<div class="stat-l" style="color:var(--blue)">📅 Due ≤60 Hari</div><div class="stat-v" style="color:var(--blue)">'+(due30+due60)+'</div><div class="stat-s">Dalam 2 bulan ke depan</div></div>';
+    sc.innerHTML=html;
+  })();
+    // Overdue + due <=10 panel
   const urgent=data.filter(r=>{const dl=dLeft(r.due_date);return getStatus(r)==='overdue'||(getStatus(r)!=='selesai'&&dl!==null&&dl<=10);}).sort((a,b)=>{
     if(getStatus(a)==='overdue'&&getStatus(b)!=='overdue')return-1;
     if(getStatus(b)==='overdue'&&getStatus(a)!=='overdue')return 1;
@@ -587,6 +607,70 @@ function renderDashboard(){
   if(cDue)cDue.destroy();
   cDue=new Chart(document.getElementById('cDue'),{type:'bar',data:{labels:dk.map(k=>{const[y,m]=k.split('-');return['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'][+m]+' '+y;}),datasets:[{data:dk.map(k=>dd[k]),backgroundColor:dk.map(k=>k<TODAY.slice(0,7)?'#e85252':k===TODAY.slice(0,7)?'#f0a030':'#4d8ef7'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{title:([i])=>i.label+' ('+dd[dk[i.dataIndex]]+' temuan)'}}},scales:{x:{grid:{display:false}},y:{ticks:{stepSize:5}}},onClick:(e,els)=>{if(!els.length)return;filterAndGo('',null,null,dk[els[0].index]);}}});
   renderSchedSummary();
+  // ── Expiry chart (30/60 days) ──
+  renderExpiryChart(data);
+}
+
+function renderExpiryChart(data){
+  const today=new Date();
+  const active=data.filter(r=>getStatus(r)!=='selesai'&&getStatus(r)!=='overdue');
+  // Build per-finding expiry data within 60 days
+  const exp60=active.filter(r=>{const dl=dLeft(r.due_date);return dl!==null&&dl>=0&&dl<=60;})
+    .sort((a,b)=>(dLeft(a.due_date)||999)-(dLeft(b.due_date)||999));
+  const exp30=exp60.filter(r=>(dLeft(r.due_date)||99)<=30);
+  // Update badges
+  const b30=document.getElementById('expiry30Badge');
+  const b60=document.getElementById('expiry60Badge');
+  if(b30)b30.textContent=exp30.length+' ≤30 hari';
+  if(b60)b60.textContent=exp60.length+' ≤60 hari';
+  // Chart: bar per finding grouped by days remaining
+  const canvas=document.getElementById('cExpiry');
+  if(!canvas)return;
+  if(canvas._chart){canvas._chart.destroy();canvas._chart=null;}
+  if(!exp60.length){
+    canvas.style.display='none';
+    const el=document.getElementById('expiryList');
+    if(el)el.innerHTML='<div style="text-align:center;padding:16px;color:var(--green);font-size:12px">✅ Tidak ada temuan yang akan expired dalam 60 hari</div>';
+    return;
+  }
+  canvas.style.display='';
+  // Group by week range
+  const bands=[{label:'0–7 hari',min:0,max:7,color:'rgba(232,82,82,0.8)'},{label:'8–14 hari',min:8,max:14,color:'rgba(240,160,48,0.8)'},{label:'15–30 hari',min:15,max:30,color:'rgba(255,200,60,0.8)'},{label:'31–60 hari',min:31,max:60,color:'rgba(77,142,247,0.8)'}];
+  const counts=bands.map(b=>exp60.filter(r=>{const dl=dLeft(r.due_date);return dl>=b.min&&dl<=b.max;}).length);
+  canvas._chart=new Chart(canvas,{type:'bar',
+    data:{labels:bands.map(b=>b.label),datasets:[{data:counts,backgroundColor:bands.map(b=>b.color),borderRadius:6,label:'Jumlah Temuan'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.raw} temuan`}}},
+      scales:{x:{grid:{display:false}},y:{beginAtZero:true,ticks:{stepSize:1}}}}});
+  // List: show each finding
+  const el=document.getElementById('expiryList');
+  if(!el)return;
+  el.innerHTML=exp60.map(r=>{
+    const dl=dLeft(r.due_date);
+    const color=dl<=7?'var(--red)':dl<=14?'var(--amber)':dl<=30?'#f5c518':'var(--blue)';
+    const uraian=(r.uraian_rekomendasi||r.rekomendasi||'-').slice(0,80);
+    return`<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg3);border-radius:var(--rsm);border:1px solid var(--border);cursor:pointer" onclick="openUpdForm('${r.id}')">
+      <div style="min-width:52px;text-align:center;padding:4px 6px;background:${color}22;border-radius:var(--rsm);border:1px solid ${color}44">
+        <div style="font-size:16px;font-weight:700;color:${color};line-height:1">${dl}</div>
+        <div style="font-size:9px;color:${color}">hari</div>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:11px;font-weight:600;color:var(--text)">${r.id} · ${r.pic||''}</div>
+        <div style="font-size:10px;color:var(--text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${uraian}</div>
+      </div>
+      <div style="font-size:10px;color:var(--text3);flex-shrink:0">${fmtDate(r.due_date)}</div>
+    </div>`;
+  }).join('');
+}
+
+function filterExpiry(days){
+  showPage('temuan');
+  setTimeout(()=>{
+    const data=getEffData();
+    const ids=data.filter(r=>{const dl=dLeft(r.due_date);return getStatus(r)!=='selesai'&&getStatus(r)!=='overdue'&&dl!==null&&dl>=0&&dl<=days;}).map(r=>r.id);
+    // Show filtered list
+    window._expiryFilter=days;
+    renderTemuan();
+  },100);
 }
 
 // ===== NOTIF PAGE =====
