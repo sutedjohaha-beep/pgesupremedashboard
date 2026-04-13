@@ -476,30 +476,9 @@ window.toggleDetail=async function(id) {
   }
 };
 
-// ── Lightbox ──────────────────────────────────────────────────
-let lbImgs=[], lbIdx=0;
-function openLB(imgs,idx,label) {
-  lbImgs=imgs; lbIdx=idx;
-  document.getElementById('lbImg').src=imgs[idx];
-  document.getElementById('lbInfo').textContent=label+' '+(idx+1)+'/'+imgs.length;
-  document.getElementById('lightbox').classList.add('on');
-}
-function closeLB() { document.getElementById('lightbox').classList.remove('on'); }
-function lbNav(d) {
-  lbIdx=(lbIdx+d+lbImgs.length)%lbImgs.length;
-  document.getElementById('lbImg').src=lbImgs[lbIdx];
-  document.getElementById('lbInfo').textContent='Foto '+(lbIdx+1)+'/'+lbImgs.length;
-}
-document.addEventListener('keydown',e=>{
-  if (!document.getElementById('lightbox').classList.contains('on')) return;
-  if(e.key==='ArrowLeft')lbNav(-1); if(e.key==='ArrowRight')lbNav(1); if(e.key==='Escape')closeLB();
-});
-document.getElementById('lightbox').addEventListener('click',function(e){if(e.target===this)closeLB();});
+// Lightbox functions (openLB, closeLB, lbNav) defined in core.js
 
-// ── Override submitUpdate ─────────────────────────────────────
-function submitUpdate() { /* see async version above */ }
-// Already defined as async above, re-alias if needed
-window.submitUpdate = submitUpdate;
+// submitUpdate: defined as async function above
 
 // ── Settings save ─────────────────────────────────────────────
 function saveWaConfig() {
