@@ -292,30 +292,55 @@ async function deleteEvidence(rid, filename) {
 
 // ── Validation ────────────────────────────────────────────────
 async function validateFinding(fid, action, updateId) {
-  const note = action==='clarify' ? prompt('Masukkan catatan klarifikasi untuk PIC:','') : '';
-  if (action==='clarify' && note===null) return; // cancelled
-  const res = await API.post(`/findings/${fid}/validate`, {action, note:note||'', update_id:updateId});
+  let note = '';
+  if (action === 'clarify') {
+    note = prompt('Masukkan catatan klarifikasi untuk PIC:\n(Jelaskan apa yang perlu dilengkapi/diperbaiki)', '');
+    if (note === null) return; // cancelled
+  }
+  const res = await API.post(`/findings/${fid}/validate`, {action, note: note||'', update_id: updateId});
   if (!res?.ok) { toast('Gagal melakukan validasi','r'); return; }
-  if (action==='validate') {
+
+  if (action === 'validate') {
     toast(`✅ Temuan ${fid} divalidasi SELESAI!`,'g');
   } else {
     toast(`⚠️ Klarifikasi dikirim ke PIC`,'a');
-    // Auto-open WA if available
-    if (res.wa_message?.to && res.wa_message?.text) {
-      const wa=res.wa_message.to.replace(/[^0-9]/g,'');
-      const url=`https://wa.me/${wa}?text=${encodeURIComponent(res.wa_message.text)}`;
+    // Build enhanced WA message with deliverables + foto info from finding data
+    const finding = (window._findings||[]).find(r=>r.id===fid);
+    if (res.wa_message?.to) {
+      const wa = res.wa_message.to.replace(/[^0-9]/g,'');
+      // Build richer clarify message
+      let clarifyText = res.wa_message.text;
+      if (finding) {
+        const rencana = finding.rencana_tindak_lanjut || finding.rencana || '-';
+        const deliv = finding.deliverables || '-';
+        const sheet = finding.sheet || '';
+        const hasFoto = (sheet==='SPT'||sheet==='SBT') && IMG_DATA && IMG_DATA[sheet] && IMG_DATA[sheet][String(finding.no)] && IMG_DATA[sheet][String(finding.no)].temuan && IMG_DATA[sheet][String(finding.no)].temuan.length > 0;
+        const fotoCount = hasFoto ? IMG_DATA[sheet][String(finding.no)].temuan.length : 0;
+        const fname = (finding.uraian_rekomendasi||finding.rekomendasi||'-').slice(0,120);
+        clarifyText = `Halo ${res.wa_message.name},\n\n`
+          + `⚠️ *KLARIFIKASI DIPERLUKAN – Audit SUPREME 2025*\n\n`
+          + `🔖 *ID Temuan:* ${fid}\n`
+          + `📍 *Sheet/Kategori:* ${sheet}\n`
+          + `📌 *Uraian Temuan:*\n${fname}\n\n`
+          + `📝 *Rencana Tindak Lanjut:*\n${rencana}\n\n`
+          + `🎯 *Deliverables (yang harus diselesaikan):*\n${deliv}\n\n`
+          + (hasFoto ? `📸 *Foto Temuan:* ${fotoCount} foto tersedia di dashboard\n👉 Lihat foto: ${getUpdateLink(fid)}\n\n` : '')
+          + `📝 *Catatan dari Admin:*\n${note||'Mohon melengkapi evidence atau memberikan penjelasan tambahan.'}\n\n`
+          + `👉 *Update progres di sini:* ${getUpdateLink(fid)}\n\n`
+          + `_Tim Internal Audit PGE UBL_`;
+      }
+      const waUrl = `https://wa.me/${wa}?text=${encodeURIComponent(clarifyText)}`;
       if (confirm(`Buka WhatsApp untuk kirim klarifikasi ke ${res.wa_message.name}?`)) {
-        window.open(url,'_blank');
+        window.open(waUrl, '_blank');
       }
     }
   }
   // Refresh data
-  const fresh=await API.get('/findings');
-  if (fresh) { _findings=fresh; window._findings=fresh; }
+  const fresh = await API.get('/findings');
+  if (fresh) { _findings = fresh; window._findings = fresh; }
   renderDashboard(); renderTemuan(); renderNotif(); renderUpdate();
   loadInboxNotifs();
-  // If detail panel open, refresh it
-  if (expandedId===fid) { closeDetail(); setTimeout(()=>toggleDetail(fid),100); }
+  if (expandedId === fid) { closeDetail(); setTimeout(()=>toggleDetail(fid), 100); }
 }
 
 // ── Notifications inbox ───────────────────────────────────────
@@ -484,18 +509,72 @@ function saveWaConfig() {
 }
 
 // ── WA Cloud API ──────────────────────────────────────────────
-async function sendWAApi(to, message) {
+async function sendWAApi(to, message, fotoDataUri) {
   const cfg=getWaCfg();
   if (!cfg.phoneId||!cfg.token) throw new Error('API belum dikonfigurasi');
-  const res=await fetch(`https://graph.facebook.com/v19.0/${cfg.phoneId}/messages`,{
-    method:'POST',
-    headers:{'Authorization':'Bearer '+cfg.token,'Content-Type':'application/json'},
-    body:JSON.stringify({messaging_product:'whatsapp',recipient_type:'individual',
-      to:to.replace(/[^0-9]/g,''),type:'text',text:{preview_url:false,body:message}})
+  const cleanTo=to.replace(/[^0-9]/g,'');
+  const headers={'Authorization':'Bearer '+cfg.token,'Content-Type':'application/json'};
+  const base=`https://graph.facebook.com/v19.0/${cfg.phoneId}/messages`;
+
+  // Step 1: If there's a foto (SPT/SBT), upload to WA media first, then send as image+caption
+  // WA Cloud API requires public URL or uploaded media ID
+  // Since we have data URI (base64), we upload via media endpoint first
+  if (fotoDataUri && fotoDataUri.startsWith('data:image')) {
+    try {
+      // Convert data URI to blob and upload to WA media
+      const mediaRes = await uploadWAMedia(cfg, fotoDataUri);
+      if (mediaRes && mediaRes.id) {
+        // Send image with caption
+        const imgRes = await fetch(base, {
+          method:'POST', headers,
+          body: JSON.stringify({
+            messaging_product:'whatsapp', recipient_type:'individual', to: cleanTo,
+            type:'image', image:{ id: mediaRes.id, caption: message }
+          })
+        });
+        const imgData = await imgRes.json();
+        if (imgRes.ok) return imgData;
+        // If image send fails, fall through to text only
+      }
+    } catch(e) { console.warn('Foto upload failed, sending text only:', e); }
+  }
+
+  // Send text message (fallback or no foto)
+  const res = await fetch(base, {
+    method:'POST', headers,
+    body: JSON.stringify({messaging_product:'whatsapp', recipient_type:'individual',
+      to: cleanTo, type:'text', text:{preview_url:false, body:message}})
   });
-  const data=await res.json();
+  const data = await res.json();
   if (!res.ok) throw new Error(data.error?.message||'API Error');
   return data;
+}
+
+async function uploadWAMedia(cfg, dataUri) {
+  // Upload image to WA Cloud API media endpoint
+  const [header, b64] = dataUri.split(',');
+  const mime = header.match(/:(.*?);/)[1];
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i=0; i<binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  const blob = new Blob([bytes], {type: mime});
+  const fd = new FormData();
+  fd.append('file', blob, 'foto_temuan.jpg');
+  fd.append('type', mime);
+  fd.append('messaging_product', 'whatsapp');
+  const res = await fetch(`https://graph.facebook.com/v19.0/${cfg.phoneId}/media`, {
+    method:'POST',
+    headers:{'Authorization':'Bearer '+cfg.token},
+    body: fd
+  });
+  return res.ok ? await res.json() : null;
+}
+
+// Build WA link URL with full message for SPT/SBT (includes foto count info)
+function buildWALinkUrl(r, picUser, forceDay) {
+  const msg = buildWAMsg(r, picUser, forceDay);
+  const wa = picUser&&picUser.wa ? picUser.wa.replace(/[^0-9]/g,'') : '';
+  return wa ? 'https://wa.me/'+wa+'?text='+encodeURIComponent(msg) : null;
 }
 
 // ── Init ─────────────────────────────────────────────────────
