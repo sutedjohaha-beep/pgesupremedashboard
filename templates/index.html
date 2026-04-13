@@ -121,7 +121,21 @@
     </div>
     <div class="od-list" id="odList"></div>
   </div>
-  <div class="g2">
+  <!-- CLOSING PERCENTAGE SUMMARY -->
+  <div class="card" style="margin-bottom:12px" id="closingCard">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+      <div>
+        <div class="card-title">📊 Persentase Closing Tindak Lanjut</div>
+        <div class="card-sub">Progress penyelesaian per kategori audit</div>
+      </div>
+      <div id="closingUpdated" style="font-size:10px;color:var(--text3)"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px" id="closingGrid">
+      <!-- rendered by JS -->
+    </div>
+  </div>
+
+<div class="g2">
     <div class="card">
       <div class="card-title">Progres per Kategori Audit</div>
       <div class="card-sub">Realisasi seluruh temuan Proses, SPT, SBT</div>
