@@ -36,70 +36,117 @@ const DEFAULT_TPLS={
 
 📋 *REMINDER AUDIT SUPREME 2025* – 10 hari lagi
 
-🔖 ID: {ID}
-📌 {TEMUAN}
-🎯 Deliverables: {DELIVERABLES}
-📅 Due Date: {DEADLINE} ({HARI} hari lagi)
-📊 Realisasi saat ini: {PROGRES}%
+🔖 *ID Temuan:* {ID}
+📍 *Sheet/Kategori:* {SHEET}
+📌 *Uraian Temuan:*
+{TEMUAN}
 
+📝 *Rencana Tindak Lanjut:*
+{RENCANA_TL}
+
+🎯 *Deliverables (yang harus diselesaikan):*
+{DELIVERABLES}
+
+📅 *Due Date:* {DEADLINE} ({HARI} hari lagi)
+📊 *Realisasi saat ini:* {PROGRES}%
+{FOTO_INFO}
 Mohon mulai mempersiapkan penyelesaian tindak lanjut ini.
 
 {LINKTEXT}
 
 _Tim Internal Audit PGE UBL_`,
+
   wa_7:`Halo {NAMA},
 
 ⏰ *REMINDER AUDIT SUPREME 2025* – 7 hari lagi
 
-🔖 ID: {ID}
-📌 {TEMUAN}
-📅 Due Date: {DEADLINE} ({HARI} hari lagi)
-📊 Realisasi: {PROGRES}%
+🔖 *ID Temuan:* {ID}
+📍 *Sheet/Kategori:* {SHEET}
+📌 *Uraian Temuan:*
+{TEMUAN}
 
-Seminggu lagi! Mohon dipastikan progress terus berjalan.
+📝 *Rencana Tindak Lanjut:*
+{RENCANA_TL}
+
+🎯 *Deliverables (yang harus diselesaikan):*
+{DELIVERABLES}
+
+📅 *Due Date:* {DEADLINE} ({HARI} hari lagi)
+📊 *Realisasi:* {PROGRES}%
+{FOTO_INFO}
+Seminggu lagi! Pastikan progress terus berjalan.
 
 {LINKTEXT}
 
 _Tim Internal Audit PGE UBL_`,
+
   wa_5:`Halo {NAMA},
 
 ⚠️ *REMINDER URGENT – AUDIT SUPREME 2025* – 5 hari lagi
 
-🔖 ID: {ID}
-📌 {TEMUAN}
-🎯 Deliverables: {DELIVERABLES}
-📅 Due Date: {DEADLINE} ({HARI} hari lagi)
-📊 Realisasi: {PROGRES}%
+🔖 *ID Temuan:* {ID}
+📍 *Sheet/Kategori:* {SHEET}
+📌 *Uraian Temuan:*
+{TEMUAN}
 
+📝 *Rencana Tindak Lanjut:*
+{RENCANA_TL}
+
+🎯 *Deliverables (yang harus diselesaikan):*
+{DELIVERABLES}
+
+📅 *Due Date:* {DEADLINE} ({HARI} hari lagi)
+📊 *Realisasi:* {PROGRES}%
+{FOTO_INFO}
 Segera selesaikan dalam 5 hari ke depan!
 
 {LINKTEXT}
 
 _Tim Internal Audit PGE UBL_`,
+
   wa_3:`Halo {NAMA},
 
 ‼️ *URGENT – 3 HARI LAGI! AUDIT SUPREME 2025*
 
-🔖 ID: {ID}
-📌 {TEMUAN}
-📅 Due Date: {DEADLINE}
-📊 Realisasi: {PROGRES}%
+🔖 *ID Temuan:* {ID}
+📍 *Sheet/Kategori:* {SHEET}
+📌 *Uraian Temuan:*
+{TEMUAN}
 
+📝 *Rencana Tindak Lanjut:*
+{RENCANA_TL}
+
+🎯 *Deliverables (yang harus diselesaikan):*
+{DELIVERABLES}
+
+📅 *Due Date:* {DEADLINE}
+📊 *Realisasi:* {PROGRES}%
+{FOTO_INFO}
 ⚠️ Hanya tersisa 3 hari! Mohon segera diselesaikan.
 Jika ada hambatan, segera eskalasikan ke atasan.
 
 {LINKTEXT}
 
 _Tim Internal Audit PGE UBL_`,
+
   wa_ov:`Halo {NAMA},
 
 ⛔ *OVERDUE! AUDIT SUPREME 2025*
 
-🔖 ID: {ID}
-📌 {TEMUAN}
-📅 Due Date: {DEADLINE} (Terlambat {HARI} hari)
-📊 Realisasi: {PROGRES}%
+🔖 *ID Temuan:* {ID}
+📍 *Sheet/Kategori:* {SHEET}
+📌 *Uraian Temuan:*
+{TEMUAN}
 
+📝 *Rencana Tindak Lanjut:*
+{RENCANA_TL}
+
+🎯 *Deliverables (yang harus diselesaikan):*
+{DELIVERABLES}
+
+📅 *Due Date:* {DEADLINE} (Terlambat {HARI} hari)
+📊 *Realisasi:* {PROGRES}%
+{FOTO_INFO}
 Temuan ini telah MELEWATI batas waktu penyelesaian.
 Mohon segera ditindaklanjuti dan perbarui progres.
 Jika ada hambatan, segera eskalasikan ke manajemen.
@@ -107,78 +154,122 @@ Jika ada hambatan, segera eskalasikan ke manajemen.
 {LINKTEXT}
 
 _Tim Internal Audit PGE UBL_`,
+
   wa_90:`Halo {NAMA},
 
 📅 *REMINDER AWAL – AUDIT SUPREME 2025* – 3 bulan lagi
 
-🔖 ID: {ID}
-📌 {TEMUAN}
-🎯 Deliverables: {DELIVERABLES}
-📅 Due Date: {DEADLINE} ({HARI} hari lagi)
-📊 Realisasi saat ini: {PROGRES}%
+🔖 *ID Temuan:* {ID}
+📍 *Sheet/Kategori:* {SHEET}
+📌 *Uraian Temuan:*
+{TEMUAN}
 
+📝 *Rencana Tindak Lanjut:*
+{RENCANA_TL}
+
+🎯 *Deliverables (yang harus diselesaikan):*
+{DELIVERABLES}
+
+📅 *Due Date:* {DEADLINE} ({HARI} hari lagi)
+📊 *Realisasi saat ini:* {PROGRES}%
+{FOTO_INFO}
 Ini adalah pengingat awal. Mohon mulai menyusun rencana tindak lanjut.
 
 {LINKTEXT}
 
 _Tim Internal Audit PGE UBL_`,
+
   wa_60:`Halo {NAMA},
 
 📋 *REMINDER – AUDIT SUPREME 2025* – 2 bulan lagi
 
-🔖 ID: {ID}
-📌 {TEMUAN}
-🎯 Deliverables: {DELIVERABLES}
-📅 Due Date: {DEADLINE} ({HARI} hari lagi)
-📊 Realisasi saat ini: {PROGRES}%
+🔖 *ID Temuan:* {ID}
+📍 *Sheet/Kategori:* {SHEET}
+📌 *Uraian Temuan:*
+{TEMUAN}
 
+📝 *Rencana Tindak Lanjut:*
+{RENCANA_TL}
+
+🎯 *Deliverables (yang harus diselesaikan):*
+{DELIVERABLES}
+
+📅 *Due Date:* {DEADLINE} ({HARI} hari lagi)
+📊 *Realisasi saat ini:* {PROGRES}%
+{FOTO_INFO}
 Dua bulan menuju deadline. Pastikan progres sudah berjalan.
 
 {LINKTEXT}
 
 _Tim Internal Audit PGE UBL_`,
+
   wa_30:`Halo {NAMA},
 
 ⏰ *REMINDER – AUDIT SUPREME 2025* – 1 bulan lagi
 
-🔖 ID: {ID}
-📌 {TEMUAN}
-🎯 Deliverables: {DELIVERABLES}
-📅 Due Date: {DEADLINE} ({HARI} hari lagi)
-📊 Realisasi: {PROGRES}%
+🔖 *ID Temuan:* {ID}
+📍 *Sheet/Kategori:* {SHEET}
+📌 *Uraian Temuan:*
+{TEMUAN}
 
+📝 *Rencana Tindak Lanjut:*
+{RENCANA_TL}
+
+🎯 *Deliverables (yang harus diselesaikan):*
+{DELIVERABLES}
+
+📅 *Due Date:* {DEADLINE} ({HARI} hari lagi)
+📊 *Realisasi:* {PROGRES}%
+{FOTO_INFO}
 Satu bulan lagi! Pastikan tindak lanjut hampir selesai.
 
 {LINKTEXT}
 
 _Tim Internal Audit PGE UBL_`,
+
   wa_custom:`Halo {NAMA},
 
 🔔 *REMINDER AUDIT SUPREME 2025*
 
-🔖 ID: {ID}
-📌 {TEMUAN}
-🎯 Deliverables: {DELIVERABLES}
-📅 Due Date: {DEADLINE} ({HARI} hari lagi)
-📊 Realisasi: {PROGRES}%
+🔖 *ID Temuan:* {ID}
+📍 *Sheet/Kategori:* {SHEET}
+📌 *Uraian Temuan:*
+{TEMUAN}
 
+📝 *Rencana Tindak Lanjut:*
+{RENCANA_TL}
+
+🎯 *Deliverables (yang harus diselesaikan):*
+{DELIVERABLES}
+
+📅 *Due Date:* {DEADLINE} ({HARI} hari lagi)
+📊 *Realisasi:* {PROGRES}%
+{FOTO_INFO}
 Mohon segera ditindaklanjuti sesuai target.
 
 {LINKTEXT}
 
 _Tim Internal Audit PGE UBL_`,
+
   em_std:`Subject: [REMINDER] Tindak Lanjut Audit SUPREME 2025 – {ID}
 
 Yth. {NAMA},
 
 Kami mengingatkan kembali tindak lanjut temuan audit berikut:
 
-  ID Temuan    : {ID}
-  Uraian       : {TEMUAN}
-  Deliverables : {DELIVERABLES}
-  Due Date     : {DEADLINE} ({HARI} hari lagi)
-  Realisasi    : {PROGRES}%
+  ID Temuan       : {ID}
+  Sheet/Kategori  : {SHEET}
+  Uraian Temuan   : {TEMUAN}
 
+  Rencana Tindak Lanjut:
+{RENCANA_TL_INDENT}
+
+  Deliverables (yang harus diselesaikan):
+{DELIVERABLES_INDENT}
+
+  Due Date        : {DEADLINE} ({HARI} hari lagi)
+  Realisasi       : {PROGRES}%
+{FOTO_INFO}
 Silakan perbarui progres tindak lanjut melalui tautan berikut:
 {LINK}
 
@@ -187,18 +278,26 @@ Mohon segera ditindaklanjuti sesuai target.
 Hormat kami,
 Tim Internal Audit
 PT Pertamina Geothermal Energy Tbk. Area Ulubelu`,
+
   em_ov:`Subject: [URGENT – OVERDUE] Tindak Lanjut Audit SUPREME 2025 – {ID}
 
 Yth. {NAMA},
 
 ⚠️ Temuan audit berikut telah MELEWATI batas waktu:
 
-  ID Temuan    : {ID}
-  Uraian       : {TEMUAN}
-  Deliverables : {DELIVERABLES}
-  Due Date     : {DEADLINE} (Terlambat {HARI} hari)
-  Realisasi    : {PROGRES}%
+  ID Temuan       : {ID}
+  Sheet/Kategori  : {SHEET}
+  Uraian Temuan   : {TEMUAN}
 
+  Rencana Tindak Lanjut:
+{RENCANA_TL_INDENT}
+
+  Deliverables (yang harus diselesaikan):
+{DELIVERABLES_INDENT}
+
+  Due Date        : {DEADLINE} (Terlambat {HARI} hari)
+  Realisasi       : {PROGRES}%
+{FOTO_INFO}
 Mohon segera selesaikan dan perbarui progres melalui:
 {LINK}
 
@@ -215,21 +314,48 @@ function getUpdateLink(rid){
   const base=window.location.href.split('#')[0].split('?')[0];
   return base+'?upd='+encodeURIComponent(rid)+'#update';
 }
+function getFotoInfo(r){
+  // For SPT/SBT: get first temuan photo and return info text + URL for WA
+  if(r.sheet!=='SPT'&&r.sheet!=='SBT') return {text:'',url:''};
+  try{
+    const entry=IMG_DATA&&IMG_DATA[r.sheet]&&IMG_DATA[r.sheet][String(r.no)];
+    if(!entry||!entry.temuan||!entry.temuan.length) return {text:'',url:''};
+    const count=entry.temuan.length;
+    return {
+      text:'📸 *Foto Temuan:* '+count+' foto tersedia (lihat di dashboard)\n',
+      url: entry.temuan[0],  // first photo as data URI
+      count: count
+    };
+  }catch(e){return {text:'',url:''};}
+}
+
 function fillTpl(tpl,r,picUser){
   const dl=dLeft(r.due_date);
   const isOv=dl!==null&&dl<0;
   const name=picUser?picUser.name:('Tim '+r.pic);
   const link=getUpdateLink(r.id);
+  const rencana=r.rencana_tindak_lanjut||r.rencana||'-';
+  const deliv=r.deliverables||'-';
+  const sheet=r.sheet||'-';
+  const fotoInfo=getFotoInfo(r);
+  // Indented versions for email
+  const rencanaIndent=rencana.split('\n').map(l=>'    '+l).join('\n');
+  const delivIndent=deliv.split('\n').map(l=>'    '+l).join('\n');
   return tpl
     .replace(/{NAMA}/g,name)
     .replace(/{ID}/g,r.id)
-    .replace(/{TEMUAN}/g,(r.uraian_rekomendasi||r.rekomendasi||'-').slice(0,150))
-    .replace(/{DELIVERABLES}/g,r.deliverables||'-')
+    .replace(/{SHEET}/g,sheet)
+    .replace(/{TEMUAN}/g,(r.uraian_rekomendasi||r.rekomendasi||'-').slice(0,200))
+    .replace(/{RENCANA_TL_INDENT}/g,rencanaIndent)
+    .replace(/{RENCANA_TL}/g,rencana)
+    .replace(/{DELIVERABLES_INDENT}/g,delivIndent)
+    .replace(/{DELIVERABLES}/g,deliv)
     .replace(/{DEADLINE}/g,fmtDate(r.due_date))
     .replace(/{PROGRES}/g,String(r.pct_realisasi))
     .replace(/{PIC}/g,r.pic||'-')
     .replace(/{HARI}/g,dl!==null?String(Math.abs(dl)):'-')
     .replace(/{LINK}/g,link)
+    .replace(/{FOTO_INFO}/g,fotoInfo.text)
     .replace(/{LINKTEXT}/g,'👉 Update progres di sini: '+link);
 }
 
@@ -239,9 +365,8 @@ function buildWAMsg(r,picUser,forceDay){
   const s=getStatus(r);
   let key='wa_custom';
   if(s==='overdue') key='wa_ov';
-  else if(forceDay) key=`wa_${forceDay}`;
+  else if(forceDay) key='wa_'+forceDay;
   else {
-    // Match to known template keys based on days
     const knownKeys={90:'wa_90',60:'wa_60',30:'wa_30',10:'wa_10',7:'wa_7',5:'wa_5',3:'wa_3'};
     if(dl!==null&&knownKeys[dl]) key=knownKeys[dl];
     else if(dl!==null&&dl<=3) key='wa_3';
@@ -253,6 +378,15 @@ function buildWAMsg(r,picUser,forceDay){
     else if(dl!==null&&dl<=90) key='wa_90';
   }
   return fillTpl(tpls[key]||DEFAULT_TPLS[key]||DEFAULT_TPLS.wa_custom||DEFAULT_TPLS.wa_10,r,picUser);
+}
+
+function getFotoDataUri(r){
+  // Return first temuan photo data URI for SPT/SBT
+  if(!IMG_DATA||r.sheet!=='SPT'&&r.sheet!=='SBT') return null;
+  try{
+    const entry=IMG_DATA[r.sheet]&&IMG_DATA[r.sheet][String(r.no)];
+    return (entry&&entry.temuan&&entry.temuan[0])||null;
+  }catch(e){return null;}
 }
 function buildEmailMsg(r,picUser){
   const tpls=getTpls();
@@ -777,6 +911,22 @@ function setRmCh(ch){
   document.getElementById('rmEmBtn').classList.toggle('on',ch==='em');
   document.getElementById('rmSendWa').style.display=ch==='wa'?'':'none';
   document.getElementById('rmSendEm').style.display=ch==='em'?'':'none';
+  // Show foto preview for SPT/SBT
+  const fotoSec=document.getElementById('rmFotoSection');
+  const fotoGal=document.getElementById('rmFotoGallery');
+  if(fotoSec&&fotoGal&&(r.sheet==='SPT'||r.sheet==='SBT')){
+    try{
+      const entry=IMG_DATA&&IMG_DATA[r.sheet]&&IMG_DATA[r.sheet][String(r.no)];
+      const fotos=entry&&entry.temuan||[];
+      if(fotos.length){
+        fotoSec.style.display='';
+        fotoGal.innerHTML=fotos.slice(0,4).map((src,i)=>
+          '<img src="'+src+'" style="width:90px;height:68px;object-fit:cover;border-radius:6px;border:1px solid var(--border);cursor:pointer" '
+          +'onclick="openLB('+JSON.stringify(fotos)+','+i+',\'Foto Temuan\')" title="Klik untuk perbesar">'
+        ).join('')+(fotos.length>4?'<div style="font-size:10px;color:var(--text3);align-self:center">+'+( fotos.length-4)+' lagi</div>':'');
+      } else {fotoSec.style.display='none';}
+    }catch(e){fotoSec.style.display='none';}
+  } else if(fotoSec){fotoSec.style.display='none';}
   const hasWa=pu&&pu.wa;const hasEm=pu&&pu.email;
   document.getElementById('rmTarget').innerHTML=ch==='wa'
     ?(hasWa?`💬 <b style="color:var(--text)">${pu.name}</b> · <span style="font-family:var(--mono);color:var(--green)">${pu.wa}</span>`:`⚠️ Nomor WA belum diset untuk PIC <b>${r.pic}</b>. Isi di Kelola Pengguna → Edit.`)
@@ -1195,7 +1345,7 @@ var saveWaCfg = c => localStorage.setItem('pge_wacfg', JSON.stringify(c));
 var getWaLog = () => JSON.parse(localStorage.getItem('pge_waApiLog') || '[]');
 var saveWaLog = l => localStorage.setItem('pge_waApiLog', JSON.stringify(l.slice(-300)));
 
-async function sendWAApi(to, message) {
+async function sendWAApi(to, message, fotoDataUri) {
   const cfg = getWaCfg();
   if (!cfg.phoneId || !cfg.token) throw new Error('API belum dikonfigurasi');
 
@@ -1406,7 +1556,7 @@ async function sendSingleViaAPI(id, wa, name) {
   }
 
   try {
-    await sendWAApi(wa, msg);
+    await sendWAApi(wa, msg, getFotoDataUri(r));
     // Mark as sent
     const sentLog = getSentLog();
     const s = getStatus(r);
@@ -1452,7 +1602,7 @@ async function sendAllViaAPI() {
     const msg = buildWAMsg(item.r, item.pu);
     try {
       if (cfg.token && cfg.phoneId && cfg.mode !== 'link') {
-        await sendWAApi(item.pu.wa, msg);
+        await sendWAApi(item.pu.wa, msg, getFotoDataUri(item.r));
         addWaLog(item.pu.wa, `${item.r.id} → ${item.pu.name}`, 'berhasil');
       } else {
         window.open(`https://wa.me/${item.pu.wa.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(msg)}`, '_blank');
@@ -1500,7 +1650,7 @@ window.scheduleCheck = function(force) {
       let ok = 0;
       for (const item of toSend) {
         try {
-          await sendWAApi(item.pu.wa, buildWAMsg(item.r, item.pu));
+          await sendWAApi(item.pu.wa, buildWAMsg(item.r, item.pu), getFotoDataUri(item.r));
           addWaLog(item.pu.wa, `AUTO: ${item.r.id} → ${item.pu.name}`, 'berhasil');
           const logKey = `${item.r.id}_${TODAY}`;
           if (item.dayLabel === 'overdue') newSent[logKey + '_ov'] = true;
