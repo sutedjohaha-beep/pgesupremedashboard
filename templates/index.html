@@ -661,6 +661,14 @@
       <button class="chtab em" id="rmEmBtn" onclick="setRmCh('em')">📧 Email</button>
     </div>
     <div class="wa-target" id="rmTarget"></div>
+    <!-- Foto temuan preview for SPT/SBT -->
+    <div id="rmFotoSection" style="display:none;margin:8px 0;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm)">
+      <div style="font-size:11px;font-weight:600;color:var(--text3);margin-bottom:8px">📸 FOTO TEMUAN (akan disertakan dalam konteks pesan)</div>
+      <div id="rmFotoGallery" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+      <div style="font-size:10px;color:var(--text3);margin-top:6px">
+        ⚠️ WA hanya bisa kirim 1 foto via API. Untuk link WA, foto ditampilkan di dashboard saja.
+      </div>
+    </div>
     <div class="msg-toolbar">
       <span class="msg-toolbar-label">Preview &amp; Edit Pesan</span>
       <button class="abtn" onclick="resetRmMsg()">↺ Reset</button>
