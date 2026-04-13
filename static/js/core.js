@@ -1,3 +1,6 @@
+// IMG_DATA: foto temuan SPT/SBT - loaded from API lazily (null in web app mode)
+var IMG_DATA = null;  // will be populated by loadImgData() if needed
+
 const TODAY=(()=>{const d=new Date();return d.toISOString().slice(0,10);})();
 const ADMIN_CODE='PGEADMIN2025';
 const DEPTS=['HSSE','MTC','OPS','BS'];
@@ -314,6 +317,16 @@ function getUpdateLink(rid){
   const base=window.location.href.split('#')[0].split('?')[0];
   return base+'?upd='+encodeURIComponent(rid)+'#update';
 }
+// Load IMG_DATA from API once (lazy)
+async function ensureImgData() {
+  if (IMG_DATA) return IMG_DATA;
+  try {
+    const res = await fetch('/api/imgdata_all', {credentials:'include'});
+    if (res.ok) { IMG_DATA = await res.json(); }
+  } catch(e) {}
+  return IMG_DATA;
+}
+
 function getFotoInfo(r){
   // For SPT/SBT: get first temuan photo and return info text + URL for WA
   if(r.sheet!=='SPT'&&r.sheet!=='SBT') return {text:'',url:''};
