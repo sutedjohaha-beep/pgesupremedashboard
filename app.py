@@ -506,6 +506,12 @@ def force_init():
     except Exception as e:
         return jsonify({'ok': False, 'error': str(e)}), 500
 
+@app.route('/api/imgdata_all')
+@login_required
+def get_all_img_data():
+    """Return all SPT/SBT photo data for the web app frontend"""
+    return jsonify(load_imgs())
+
 @app.route('/api/health')
 def health(): return jsonify({'status':'ok','time':datetime.now().isoformat()})
 
