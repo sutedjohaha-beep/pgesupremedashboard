@@ -414,9 +414,9 @@ function switchAuth(m){
   document.getElementById('regForm').style.display=m==='reg'?'':'none';
   document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('on',(i===0&&m==='login')||(i===1&&m==='reg')));
 }
-function doLogin(){ /* overridden by api.js */ }
-function doSelfRegister(){ /* overridden by api.js */ }
-function doLogout(){ /* overridden by api.js */ }
+
+
+
 function initAdmin(){} // handled by server
 
 // ===== HELPERS =====
@@ -1140,9 +1140,9 @@ function editUser(){
   document.getElementById('euPass').value='';
   document.getElementById('editUserModal').classList.add('on');
 }
-function saveEditUser(){/* overridden by api.js */}
-function delUser(){/* overridden by api.js */}
-function doAddUser(){/* overridden by api.js */}
+
+
+
 
 // ===== UPDATE =====
 let updTarget=null,updPct=0;
@@ -1188,7 +1188,7 @@ function openUpdForm(id){
   document.getElementById('updForm').scrollIntoView({behavior:'smooth'});
 }
 function setPct(v,btn){updPct=v;document.querySelectorAll('.pct-opt').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
-function submitUpdate(){/* overridden by api.js */}
+
 function cancelUpdate(){document.getElementById('updForm').style.display='none';updTarget=null;}
 
 // ===== NAV =====
@@ -1751,14 +1751,14 @@ function validateFile(file){
 function triggerUpload(rid){
   document.getElementById('fileInput_'+rid).click();
 }
-function handleFileInput(){/* overridden by api.js */}
-function handleDrop(){/* overridden by api.js */}
-function delTlImg(){/* overridden by api.js */}
+
+
+
 
 // ---- Update page upload ----
 function triggerUpdUpload(){document.getElementById('updFileInput').click();}
-function handleUpdFileInput(){/* overridden by api.js */}
-function handleUpdDrop(){/* overridden by api.js */}
+
+
 function renderUpdTlPreview(){
   const el=document.getElementById('updTlPreview');if(!el)return;
   const pending=window._pendingTlImgs||[];
