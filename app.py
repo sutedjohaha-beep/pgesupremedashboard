@@ -10,7 +10,7 @@ DATA_DIR   = os.path.join(BASE_DIR, 'data')
 UPLOAD_DIR = os.path.join(BASE_DIR, 'static', 'uploads')
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
-app.secret_key = os.environ.get('SECRET_KEY', secrets.token_hex(32))
+app.secret_key = os.environ.get('SECRET_KEY', 'pge-ubl-audit-2025-default-key-change-in-prod')
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=12)
@@ -78,6 +78,7 @@ def init_db():
     for k, v in defaults.items():
         db.execute("INSERT OR IGNORE INTO settings(key,value) VALUES(?,?)", (k, v))
     db.commit(); db.close()
+    print(f"DB initialized: {DB_PATH}")
 
 _ready = False
 
@@ -85,10 +86,19 @@ _ready = False
 def ensure_db():
     global _ready
     if not _ready:
-        init_db(); _ready = True
+        try:
+            init_db()
+            _ready = True
+        except Exception as e:
+            print(f"before_request init_db error: {e}")
 
-try: init_db(); _ready = True
-except Exception as e: print(f"DB init: {e}")
+# Force init at import time (works with Gunicorn --preload)
+try:
+    init_db()
+    _ready = True
+    print("Module-level DB init: OK")
+except Exception as e:
+    print(f"Module-level DB init error: {e}")
 
 def get_setting(k, d=''):
     db = get_db(); r = db.execute("SELECT value FROM settings WHERE key=?", (k,)).fetchone(); db.close()
@@ -483,6 +493,18 @@ def reset_admin():
 def check_setup():
     db = get_db(); users = db.execute("SELECT username,role FROM users").fetchall(); db.close()
     return jsonify({'users':[dict(u) for u in users],'db':DB_PATH})
+
+@app.route('/api/init')
+def force_init():
+    """Emergency init endpoint - call this if login fails after deploy"""
+    try:
+        init_db()
+        db = get_db()
+        users = db.execute("SELECT username,role FROM users").fetchall()
+        db.close()
+        return jsonify({'ok': True, 'users': [dict(u) for u in users], 'msg': 'DB initialized'})
+    except Exception as e:
+        return jsonify({'ok': False, 'error': str(e)}), 500
 
 @app.route('/api/health')
 def health(): return jsonify({'status':'ok','time':datetime.now().isoformat()})
