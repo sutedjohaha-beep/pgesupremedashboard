@@ -668,6 +668,54 @@ function updateOverdueBadge(){
   const badge=document.getElementById('overdueCount');
   badge.textContent=cnt||'';badge.style.display=cnt?'':'none';
 }
+function renderClosingStats(data){
+  const el=document.getElementById('closingGrid');
+  if(!el)return;
+
+  const sheets=[
+    {key:'Proses', label:'Proses',       color:'#9b7af5', items:data.filter(r=>r.sheet==='Proses')},
+    {key:'SPT',    label:'SPT',          color:'#2ecc8e', items:data.filter(r=>r.sheet==='SPT')},
+    {key:'SBT',    label:'SBT',          color:'#f0a030', items:data.filter(r=>r.sheet==='SBT')},
+    {key:'total',  label:'Total',        color:'#4d8ef7', items:data},
+  ];
+
+  el.innerHTML=sheets.map(s=>{
+    const total=s.items.length;
+    if(!total) return '<div class="closing-item"><div class="closing-label">'+s.label+'</div><div style="font-size:11px;color:var(--text3)">Tidak ada data</div></div>';
+    const selesai=s.items.filter(r=>getStatus(r)==='selesai').length;
+    const pct=total>0?Math.round(selesai/total*100):0;
+    const r=52, cx=64, cy=64;
+    const circ=2*Math.PI*r;
+    const dash=circ*(pct/100);
+    const gap=circ-dash;
+    const col=s.color;
+    const colFade=col+'33';
+    return '<div class="closing-item">'
+      +'<div class="closing-label">'+s.label+'</div>'
+      +'<div class="closing-ring-wrap">'
+        +'<svg width="128" height="128" viewBox="0 0 128 128">'
+          +'<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+colFade+'" stroke-width="10"/>'
+          +'<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="10"'
+            +' stroke-dasharray="'+dash.toFixed(1)+' '+gap.toFixed(1)+'"'
+            +' stroke-dashoffset="'+((circ/4)).toFixed(1)+'"'
+            +' stroke-linecap="round"'
+            +' style="transition:stroke-dasharray 0.8s cubic-bezier(.4,0,.2,1)"/>'
+        +'</svg>'
+        +'<div class="closing-pct-text">'
+          +'<span class="closing-pct-val" style="color:'+col+'">'+pct+'%</span>'
+          +'<span class="closing-pct-sub">Closing</span>'
+        +'</div>'
+      +'</div>'
+      +'<div class="closing-stats">'+selesai+' / '+total+' temuan selesai</div>'
+      +'<div class="closing-bar"><div class="closing-bar-fill" style="width:'+pct+'%;background:'+col+'"></div></div>'
+    +'</div>';
+  }).join('');
+
+  // Timestamp
+  const upd=document.getElementById('closingUpdated');
+  if(upd) upd.textContent='Diperbarui: '+new Date().toLocaleTimeString('id-ID');
+}
+
 function renderDashboard(){
   Chart.defaults.color='#7d8fa8';Chart.defaults.borderColor='rgba(255,255,255,0.05)';
   const data=getEffData();
@@ -753,6 +801,7 @@ function renderDashboard(){
   const dk=Object.keys(dd).sort();
   if(cDue)cDue.destroy();
   cDue=new Chart(document.getElementById('cDue'),{type:'bar',data:{labels:dk.map(k=>{const[y,m]=k.split('-');return['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'][+m]+' '+y;}),datasets:[{data:dk.map(k=>dd[k]),backgroundColor:dk.map(k=>k<TODAY.slice(0,7)?'#e85252':k===TODAY.slice(0,7)?'#f0a030':'#4d8ef7'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{title:([i])=>i.label+' ('+dd[dk[i.dataIndex]]+' temuan)'}}},scales:{x:{grid:{display:false}},y:{ticks:{stepSize:5}}},onClick:(e,els)=>{if(!els.length)return;filterAndGo('',null,null,dk[els[0].index]);}}});
+  renderClosingStats(data);
   renderSchedSummary();
   // ── Expiry chart (30/60 days) ──
   renderExpiryChart(data);
